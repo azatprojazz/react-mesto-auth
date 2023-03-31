@@ -9,7 +9,7 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike
   return (
     <main className="content">
       <section className="profile" aria-label="Описание профиля">
-        <button className="profile__edit-image" onClick={onEditAvatar}>
+        <button className="profile__edit-image" onClick={onEditAvatar} type="button">
           <img className="profile__avatar" src={currentUser.avatar ? currentUser.avatar : avatar} alt="Аватарка" />
         </button>
         <div className="profile__info">
