@@ -19,9 +19,7 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, onOverlay }) {
   }
 
   function handleSubmit(evt) {
-    // Запрещаем браузеру переходить по адресу формы
     evt.preventDefault();
-    // Передаём значения управляемых компонентов во внешний обработчик
     onAddPlace({
       name,
       link,

@@ -17,9 +17,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, onOverlay }) {
   }, [currentUser, isOpen]);
 
   function handleSubmit(evt) {
-    // Запрещаем браузеру переходить по адресу формы
     evt.preventDefault();
-
     // Передаём значения управляемых компонентов во внешний обработчик
     onUpdateUser({
       name,

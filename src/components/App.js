@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
+import { authApi } from '../utils/authApi';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Header from './Header';
-import Main from './Main';
-import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
@@ -13,14 +12,24 @@ import AddPlacePopup from './AddPlacePopup';
 import Register from './Register';
 import Login from './Login';
 import ProtectedRouteElement from './ProtectedRoute';
+import MainWithFooter from './MainWithFooter';
+import InfoTooltip from './InfoTooltip';
+import Loader from './Loader';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [isRegistrationSuccess, setIsRegistrationSuccess] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     Promise.all([api.getUserInfo(), api.getInitialCards()])
@@ -31,6 +40,28 @@ function App() {
       .catch((err) => {
         console.log(err);
       });
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      authApi
+        .validateToken(localStorage.getItem('token'))
+        .then(({ data }) => {
+          if (data) {
+            setLoggedIn(true);
+            setUserEmail(data.email);
+            navigate('/', { replace: true });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+    }
   }, []);
 
   function handleUpdateUser({ name, about }) {
@@ -59,7 +90,6 @@ function App() {
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
-
     api
       .addLikeCard(card._id, !isLiked)
       .then((newCard) => {
@@ -93,6 +123,54 @@ function App() {
       });
   }
 
+  const handleRegisterClick = (email, password) => {
+    // const { email, password } = email, password;
+    authApi
+      .registerUser(email, password)
+      .then((res) => {
+        navigate('/sign-in', { replace: true });
+        setIsRegistrationSuccess(true);
+        handleSignup();
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsRegistrationSuccess(false);
+        handleSignup();
+      });
+  };
+
+  const handleLoginClick = (email, password) => {
+    authApi
+      .loginUser(email, password)
+      .then((data) => {
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          setLoggedIn(true);
+          setUserEmail(email);
+          navigate('/', { replace: true });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsRegistrationSuccess(false);
+        handleSignup();
+      });
+  };
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  function handleSignout() {
+    setLoggedIn(false);
+    localStorage.removeItem('token');
+    navigate('/sign-in', { replace: true });
+  }
+
+  function handleSignup() {
+    setIsInfoTooltipOpen(true);
+  }
+
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
   }
@@ -123,6 +201,7 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
+    setIsInfoTooltipOpen(false);
     setSelectedCard({
       ...selectedCard,
       isOpen: false,
@@ -133,28 +212,23 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <>
         <div className="page">
-          <Header />
+          <Header userEmail={userEmail} onSignout={handleSignout} />
           <Routes>
-            <Route path="/sign-up" element={<Register />} />
-            <Route path="/sign-in" element={<Login />} />
+            <Route path="/sign-up" element={<Register onSignup={handleRegisterClick} />} />
+            <Route path="/sign-in" element={<Login onSignin={handleLoginClick} />} />
             <Route
               path="/"
               element={
                 <ProtectedRouteElement
-                  element={
-                    <>
-                      <Main
-                        onEditProfile={handleEditProfileClick}
-                        onAddPlace={handleAddPlaceClick}
-                        onEditAvatar={handleEditAvatarClick}
-                        onCardClick={handleCardClick}
-                        onCardLike={handleCardLike}
-                        onCardDelete={handleCardDelete}
-                        cards={cards}
-                      />
-                      <Footer />
-                    </>
-                  }
+                  element={MainWithFooter}
+                  loggedIn={loggedIn}
+                  onEditProfile={handleEditProfileClick}
+                  onAddPlace={handleAddPlaceClick}
+                  onEditAvatar={handleEditAvatarClick}
+                  onCardClick={handleCardClick}
+                  onCardLike={handleCardLike}
+                  onCardDelete={handleCardDelete}
+                  cards={cards}
                 />
               }
             />
@@ -188,6 +262,13 @@ function App() {
           submitBtnText="Да"
           onOverlay={closePopupsByOverlay}
         ></PopupWithForm>
+        <InfoTooltip
+          name="infoTooltip"
+          isOpen={isInfoTooltipOpen}
+          isSuccess={isRegistrationSuccess}
+          onClose={closeAllPopups}
+          onOverlay={closePopupsByOverlay}
+        />
         <ImagePopup card={selectedCard} onClose={closeAllPopups} onOverlay={closePopupsByOverlay} />
       </>
     </CurrentUserContext.Provider>
