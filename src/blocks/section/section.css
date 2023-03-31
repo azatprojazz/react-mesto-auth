@@ -1,0 +1,7 @@
+.section {
+  display: flex;
+  align-items: center;
+  flex-flow: column nowrap;
+  justify-content: center;
+  margin: 0 auto;
+}
