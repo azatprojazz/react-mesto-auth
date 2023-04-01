@@ -1,14 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function Register({ onSignup }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  useEffect(() => {
-    setEmail('');
-    setPassword('');
-  }, []);
 
   function handleChangeEmail(evt) {
     setEmail(evt.target.value);

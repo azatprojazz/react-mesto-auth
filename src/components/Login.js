@@ -1,13 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 function Login({ onSignin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  useEffect(() => {
-    setEmail('');
-    setPassword('');
-  }, []);
 
   function handleChangeEmail(evt) {
     setEmail(evt.target.value);
