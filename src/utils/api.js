@@ -1,78 +1,74 @@
 class Api {
+  // Конструктор принимает объект с параметрами и устанавливает базовый URL и заголовки для API
   constructor(options) {
     this._baseUrl = options.baseUrl;
     this._headers = options.headers;
   }
 
+  // Обрабатывает ответ сервера, возвращает JSON или ошибку
   _response(res) {
     return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
   }
 
+  // Выполняет запрос к API с указанными параметрами
+  async _fetch(url, options = {}) {
+    const res = await fetch(`${this._baseUrl}${url}`, {
+      ...options,
+      headers: this._headers,
+    });
+    return this._response(res);
+  }
+
+  // Получает информацию о пользователе
   getUserInfo() {
-    return fetch(`${this._baseUrl}/users/me`, {
-      headers: this._headers,
-    }).then((res) => {
-      return this._response(res);
-    });
+    return this._fetch('/users/me');
   }
 
+  // Обновляет информацию о пользователе (имя и описание)
   editUserInfo({ name, about }) {
-    return fetch(`${this._baseUrl}/users/me`, {
+    return this._fetch('/users/me', {
       method: 'PATCH',
-      headers: this._headers,
       body: JSON.stringify({ name, about }),
-    }).then((res) => {
-      return this._response(res);
     });
   }
 
+  // Получает начальные карточки
   getInitialCards() {
-    return fetch(`${this._baseUrl}/cards`, {
-      headers: this._headers,
-    }).then((res) => {
-      return this._response(res);
-    });
+    return this._fetch('/cards');
   }
 
+  // Добавляет новую карточку с указанными названием и ссылкой на изображение
   addNewCard({ name, link }) {
-    return fetch(`${this._baseUrl}/cards`, {
+    return this._fetch('/cards', {
       method: 'POST',
-      headers: this._headers,
       body: JSON.stringify({ name, link }),
-    }).then((res) => {
-      return this._response(res);
     });
   }
 
+  // Обновляет аватар пользователя
   setNewAvatar({ avatar }) {
-    return fetch(`${this._baseUrl}/users/me/avatar`, {
+    return this._fetch('/users/me/avatar', {
       method: 'PATCH',
-      headers: this._headers,
       body: JSON.stringify({ avatar }),
-    }).then((res) => {
-      return this._response(res);
     });
   }
 
+  // Удаляет карточку с указанным идентификатором
   deleteCard(cardId) {
-    return fetch(`${this._baseUrl}/cards/${cardId}`, {
+    return this._fetch(`/cards/${cardId}`, {
       method: 'DELETE',
-      headers: this._headers,
-    }).then((res) => {
-      return this._response(res);
     });
   }
 
+  // Добавляет или удаляет лайк карточки в зависимости от значения isLiked
   addLikeCard(cardId, isLiked) {
-    return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
+    return this._fetch(`/cards/${cardId}/likes`, {
       method: `${isLiked ? 'PUT' : 'DELETE'}`,
-      headers: this._headers,
-    }).then((res) => {
-      return this._response(res);
     });
   }
 }
 
+// Экспортирует экземпляр класса Api с заданным базовым URL и заголовками
 export const api = new Api({
   baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-59',
   headers: {
