@@ -52,11 +52,11 @@ function App() {
 
   // Проверяем, открыт ли хотя бы один попап
   const isAnyPopupOpen =
-  isEditProfilePopupOpen ||
-  isAddPlacePopupOpen ||
-  isEditAvatarPopupOpen ||
-  isInfoTooltipOpen ||
-  (selectedCard && selectedCard.link);
+    isEditProfilePopupOpen ||
+    isAddPlacePopupOpen ||
+    isEditAvatarPopupOpen ||
+    isInfoTooltipOpen ||
+    (selectedCard && selectedCard.link);
 
   // Функция для закрытия всплывающих окон по нажатию на Escape
   const handleEscClose = (evt) => {

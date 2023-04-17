@@ -2,10 +2,7 @@
 function ImagePopup({ card, onClose, onOverlay }) {
   // Рендер компонента ImagePopup
   return (
-    <div
-      className={`popup popup_type_view-card ${card.isOpen ? 'popup_opened' : ''}`}
-      onClick={onOverlay}
-    >
+    <div className={`popup popup_type_view-card ${card.isOpen ? 'popup_opened' : ''}`} onClick={onOverlay}>
       <div className="popup__view-container">
         <button
           className="popup__close-btn opacity-on-hover"
