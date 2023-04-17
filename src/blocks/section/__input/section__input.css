@@ -1,7 +1,7 @@
 .section__input {
   box-sizing: border-box;
   width: 100%;
-  padding-bottom: 13px;
+  padding-bottom: 9px;
   color: white;
   border: none;
   border-bottom: 2px solid rgba(204, 204, 204, 1);
@@ -17,5 +17,5 @@
 }
 
 .section__input:nth-of-type(2) {
-  margin-top: 30px;
+  margin-top: 42px;
 }
