@@ -1,23 +1,29 @@
 import { useState, useEffect } from 'react';
 import PopupWithForm from './PopupWithForm.js';
 
+// Компонент всплывающего окна для добавления новой карточки
 function AddPlacePopup({ isOpen, onClose, onAddPlace, onOverlay }) {
+  // Состояние для хранения значения полей ввода имени и ссылки на картинку
   const [name, setName] = useState('');
   const [link, setLink] = useState('');
 
+  // Эффект для сброса полей ввода при открытии всплывающего окна
   useEffect(() => {
     setName('');
     setLink('');
   }, [isOpen]);
 
+  // Обработчик изменения поля ввода имени
   function handleChangeName(evt) {
     setName(evt.target.value);
   }
 
+  // Обработчик изменения поля ввода ссылки на картинку
   function handleChangeLink(evt) {
     setLink(evt.target.value);
   }
 
+  // Обработчик отправки формы
   function handleSubmit(evt) {
     evt.preventDefault();
     onAddPlace({
@@ -27,6 +33,8 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, onOverlay }) {
     setName('');
     setLink('');
   }
+
+  // Рендер компонента AddPlacePopup
   return (
     <PopupWithForm
       title="Новое место"

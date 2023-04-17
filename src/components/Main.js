@@ -3,9 +3,12 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import avatar from '../images/avatar.jpg';
 import Card from './Card.js';
 
+// Компонент основного контента страницы
 function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike, onCardDelete, cards }) {
+  // Получение данных текущего пользователя из контекста
   const currentUser = useContext(CurrentUserContext);
 
+  // Рендер компонента Main
   return (
     <main className="content">
       <section className="profile" aria-label="Описание профиля">

@@ -1,4 +1,5 @@
 function PopupWithForm({ title, name, children, submitBtnText, isOpen, onClose, onSubmit, onOverlay }) {
+  // Рендер компонента PopupWithForm
   return (
     <div className={`popup popup_type_${name} ${isOpen ? 'popup_opened' : ''}`} onClick={onOverlay}>
       <div className="popup__container">

@@ -1,6 +1,8 @@
 import { SpinnerCircularSplit } from 'spinners-react';
 
+// Компонент индикатора загрузки с анимацией
 function Loader() {
+  // Рендер компонента Loader
   return (
     <SpinnerCircularSplit
       size={400}

@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+// Компонент формы регистрации
 function Register({ onSignup }) {
+  // Состояние для хранения значения полей email и пароль
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Обработчики изменения полей email и пароль
   function handleChangeEmail(evt) {
     setEmail(evt.target.value);
   }
@@ -13,13 +16,15 @@ function Register({ onSignup }) {
     setPassword(evt.target.value);
   }
 
+  // Обработчик отправки формы
   function handleSubmit(e) {
     e.preventDefault();
     onSignup(email, password);
   }
 
+  // Рендер компонента Register
   return (
-    <section className="section">
+    <section className="section content">
       <h2 className="section__header">Регистрация</h2>
       <form className="section__form" onSubmit={handleSubmit}>
         <input

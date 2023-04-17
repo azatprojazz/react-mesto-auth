@@ -1,6 +1,8 @@
 import { Routes, Route, NavLink } from 'react-router-dom';
 
+// Компонент навигационного меню
 function Navbar({ userEmail, onSignout }) {
+  // Рендер компонента Navbar
   return (
     <nav className="menu">
       <Routes>

@@ -2,29 +2,32 @@ import { useEffect, useState, useContext } from 'react';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import PopupWithForm from './PopupWithForm.js';
 
+// Компонент всплывающего окна для редактирования профиля пользователя
 function EditProfilePopup({ isOpen, onClose, onUpdateUser, onOverlay }) {
+  // Состояние для хранения значений полей ввода имени и описания
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
-  // Подписка на контекст
+  // Подписка на контекст текущего пользователя
   const currentUser = useContext(CurrentUserContext);
 
-  // После загрузки текущего пользователя из API
-  // его данные будут использованы в управляемых компонентах.
+  // Заполнение полей ввода данными текущего пользователя при открытии всплывающего окна
   useEffect(() => {
     setName(currentUser.name);
     setDescription(currentUser.about);
   }, [currentUser, isOpen]);
 
+  // Обработчик отправки формы
   function handleSubmit(evt) {
     evt.preventDefault();
-    // Передаём значения управляемых компонентов во внешний обработчик
+    // Передача значений полей ввода во внешний обработчик
     onUpdateUser({
       name,
       about: description,
     });
   }
 
+  // Обработчики изменения полей ввода имени и описания
   function handleChangeName(evt) {
     setName(evt.target.value);
   }
@@ -33,6 +36,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, onOverlay }) {
     setDescription(evt.target.value);
   }
 
+  // Рендер компонента EditProfilePopup
   return (
     <PopupWithForm
       title="Редактировать профиль"

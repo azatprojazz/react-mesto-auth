@@ -1,22 +1,28 @@
 import { useRef, useEffect } from 'react';
 import PopupWithForm from './PopupWithForm.js';
 
+// Компонент всплывающего окна для обновления аватара пользователя
 function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, onOverlay }) {
-  // Подписка на контекст
+  // Создание ссылки на поле ввода аватара с помощью useRef
   const avatarRef = useRef();
 
+  // Эффект для сброса поля ввода при открытии всплывающего окна
   useEffect(() => {
     avatarRef.current.value = '';
   }, [isOpen]);
 
+  // Обработчик отправки формы
   function handleSubmit(evt) {
     evt.preventDefault();
 
+    // Вызов функции onUpdateAvatar с новым значением аватара
     onUpdateAvatar({
-      avatar: avatarRef.current.value /* Значение инпута, полученное с помощью рефа */,
+      avatar: avatarRef.current.value, // Значение инпута, полученное с помощью рефа
     });
     avatarRef.current.value = '';
   }
+
+  // Рендер компонента EditAvatarPopup
   return (
     <PopupWithForm
       title="Обновить аватар"
