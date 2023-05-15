@@ -1,5 +1,5 @@
 // Импорт React и хуков
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 // Импорт компонентов из библиотеки react-router-dom
 import { Routes, Route, useNavigate } from 'react-router-dom';
@@ -49,7 +49,6 @@ function App() {
 
   // Хук для навигации
   const navigate = useNavigate();
-
   // Проверяем, открыт ли хотя бы один попап
   const isAnyPopupOpen =
     isEditProfilePopupOpen ||
@@ -58,12 +57,30 @@ function App() {
     isInfoTooltipOpen ||
     (selectedCard && selectedCard.link);
 
+  // Функция для закрытия всех всплывающих окон
+  const closeAllPopups = useCallback(
+    (evt) => {
+      setIsEditAvatarPopupOpen(false);
+      setIsEditProfilePopupOpen(false);
+      setIsAddPlacePopupOpen(false);
+      setIsInfoTooltipOpen(false);
+      setSelectedCard({
+        ...selectedCard,
+        isOpen: false,
+      });
+    },
+    [selectedCard]
+  );
+
   // Функция для закрытия всплывающих окон по нажатию на Escape
-  const handleEscClose = (evt) => {
-    if (evt.code === 'Escape' && isAnyPopupOpen) {
-      closeAllPopups();
-    }
-  };
+  const handleEscClose = useCallback(
+    (evt) => {
+      if (evt.code === 'Escape' && isAnyPopupOpen) {
+        closeAllPopups();
+      }
+    },
+    [closeAllPopups, isAnyPopupOpen]
+  );
 
   // Хук useEffect для добавления и удаления обработчика событий keydown
   // при монтировании и размонтировании компонента
@@ -72,7 +89,7 @@ function App() {
     return () => {
       window.removeEventListener('keydown', handleEscClose);
     };
-  }, [isAnyPopupOpen]);
+  }, [handleEscClose, isAnyPopupOpen]);
 
   // Получение данных пользователя и карточек при успешном входе
   // Запрашиваем данные только если пользователь авторизован (loggedIn === true)
@@ -82,7 +99,8 @@ function App() {
         try {
           const [userData, cardsData] = await Promise.all([api.getUserInfo(), api.getInitialCards()]);
           setCurrentUser(userData);
-          setCards((prevCards) => [...prevCards, ...cardsData]);
+          const cardsDataReversed = cardsData.reverse();
+          setCards(cardsDataReversed);
         } catch (err) {
           console.log(err);
         }
@@ -234,10 +252,12 @@ function App() {
     setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
   }
 
+  // Фукнция для открытия попапа изменения профиля
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(!isEditProfilePopupOpen);
   }
 
+  // Функция для открытия попапа добавления новой карточки
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(!isAddPlacePopupOpen);
   }
@@ -256,18 +276,6 @@ function App() {
     if (evt.target === evt.currentTarget) {
       closeAllPopups();
     }
-  }
-
-  // Функция для закрытия всех всплывающих окон
-  function closeAllPopups() {
-    setIsEditAvatarPopupOpen(false);
-    setIsEditProfilePopupOpen(false);
-    setIsAddPlacePopupOpen(false);
-    setIsInfoTooltipOpen(false);
-    setSelectedCard({
-      ...selectedCard,
-      isOpen: false,
-    });
   }
 
   // Рендер компонента App
